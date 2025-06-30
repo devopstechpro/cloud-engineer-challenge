@@ -21,7 +21,7 @@ export class EntrixStack extends cdk.Stack {
 
     // S3 Bucket for order results
     const bucket = new s3.Bucket(this, 'OrderResultsBucket', {
-      bucketName: 'bhargav-order-results',
+      bucketName: 'devopstechpro-order-results',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
     });
