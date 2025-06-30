@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
 import { EntrixStack } from '../lib/entrix-stack';
+import { PipelineStack } from '../lib/pipeline-stack';
 
 const app = new cdk.App();
 new EntrixStack(app, 'EntrixStack', {
@@ -17,4 +18,11 @@ new EntrixStack(app, 'EntrixStack', {
   // env: { account: '123456789012', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+});
+
+new PipelineStack(app, 'PipelineStack', {
+  /*
+   * Make sure to update githubOwner, githubRepo, and connectionArn in pipeline-stack.ts
+   * to match your actual GitHub repository and CodeStar Connection ARN.
+   */
 });
