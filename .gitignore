@@ -1,0 +1,42 @@
+# Node.js
+node_modules/
+cdk.out/
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+
+# Lambda build artifacts
+src/*/dist/
+src/*/build/
+src/*/venv/
+src/*/.env
+src/*/.pytest_cache/
+src/*/.mypy_cache/
+src/*/.coverage
+src/*/python/
+
+# VSCode and IDEs
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Test and coverage
+coverage/
+.nyc_output/
+
+# Misc
+.env
+.env.*
+*.log
