@@ -85,13 +85,13 @@ This project uses two separate pipelines to automatically deploy app code:
 
 ### Generating a JWT Token for API Authentication
 
-You can use the provided utility in `src/create_auth_lambda_token` to generate a valid JWT token for testing the API Gateway Lambda authorizer.
+You can use the provided utility in `util/create_auth_lambda_token` to generate a valid JWT token for testing the API Gateway Lambda authorizer.
 
 #### Steps:
 
 1. **Install dependencies:**
    ```sh
-   cd src/create_auth_lambda_token
+   cd util/create_auth_lambda_token
    pip install -r requirements.txt
    ```
 2. **Generate a JWT token:**
