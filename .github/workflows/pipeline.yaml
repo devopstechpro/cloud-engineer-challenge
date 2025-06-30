@@ -27,10 +27,6 @@ jobs:
       - name: Build CDK app
         run: npm run build
         working-directory: entrix
-    
-      - name: Run CDK synth
-        run: npx cdk synth
-        working-directory: entrix
 
       - name: Run tests
         run: npm test
