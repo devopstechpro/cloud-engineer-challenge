@@ -35,6 +35,26 @@ Thumbs.db
 coverage/
 .nyc_output/
 
+src/*/build/
+src/*/dist/
+src/*/venv/
+src/*/.env
+src/*/.pytest_cache/
+src/*/.mypy_cache/
+src/*/.coverage
+src/*/bin/
+src/*/lib/
+src/*/test/
+src/*/test_results/
+src/*/test_results.xml
+src/*/test_results.json
+src/*/test_results.html
+src/*/include/
+src/*/pyvenv.cfg
+src/*/python/
+src/*/python3.13/
+src/*/python3.13/
+
 # Misc
 .env
 .env.*
@@ -46,6 +66,8 @@ coverage/
 !auth_lambda/requirements.txt
 !create_auth_lambda_token/
 !src/auth_lambda_layer/
+!src/auth_lambda/requirements.txt
+!src/auth_lambda/app.py
 !entrix/
 !lambda_a/
 !lambda_b/
