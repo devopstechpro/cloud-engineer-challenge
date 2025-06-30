@@ -21,6 +21,7 @@ new EntrixStack(app, 'EntrixStack', {
 });
 
 new PipelineStack(app, 'PipelineStack', {
+  env: { region: 'eu-west-1' },
   /*
    * Make sure to update githubOwner, githubRepo, and connectionArn in pipeline-stack.ts
    * to match your actual GitHub repository and CodeStar Connection ARN.
