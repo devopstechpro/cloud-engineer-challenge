@@ -41,5 +41,5 @@ jobs:
           aws-region: eu-west-1
 
       - name: Deploy CDK stack
-        run: npx cdk deploy --require-approval never
+        run: npx cdk deploy --require-approval never --all
         working-directory: entrix
