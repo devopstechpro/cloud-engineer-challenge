@@ -1,4 +1,4 @@
-# Entrix AWS Infrastructure (CDK)
+# Cloud Engineer Challenge / Entrix AWS Infrastructure using CDK
 
 This project defines the infrastructure for the Entrix energy market auction service using AWS CDK (TypeScript). The solution is fully serverless, secure, and designed for easy extensibility and robust automation.
 
@@ -18,36 +18,59 @@ This project defines the infrastructure for the Entrix energy market auction ser
 - **Lambda B**: Processes each order, saves accepted results to S3, raises error for rejected orders.
 - **SNS Topic**: Simulates Slack notifications for errors.
 - **EventBridge Rule**: Triggers the Step Function pipeline every 5 minutes.
-- **Lambda Layer**: Provides PyJWT for the authorizer Lambda.
+- **Auth Lambda Layer**: Provides PyJWT package for the authorizer Lambda function.
+- **CodePipeline**: Builds and deploys app code as per environment upon every push to main/master.
+- **Github Actions**: Builds and tests app code on every push to main/master.
 
 ---
 
-## Deployment
+## Deployment 
 
-1. **Install dependencies:**
+*Build test and deploy from local system.*
+
+1. **Change directory**
    ```sh
+   cd entrix/
    npm install
    ```
-2. **Build the CDK app:**
+2. **Install dependencies:**
+   ```sh
+   cd entrix/
+   npm install
+   ```
+3. **Build the CDK app:**
    ```sh
    npm run build
    ```
-3. **Install PyJWT as a Lambda Layer:**
+4. **Install PyJWT as a Lambda Layer:**
    ```sh
    mkdir -p ../src/auth_lambda_layer/python
    pip3 install pyjwt -t ../src/auth_lambda_layer/python
    ```
-4. **Deploy the stack:**
+5. **Deploy the stack:**
    ```sh
    npx cdk deploy
    ```
 
+## CI/CD Pipelines
+
+This project uses two separate pipelines to automatically deploy app code:
+
+- **GitHub Actions** (`.github/workflows/pipeline.yaml`): Runs on every push or pull request to `main`. It builds and tests the CDK app, but does not deploy to AWS. This ensures code quality and correctness before deployment.
+- **AWS CodePipeline (CDK Pipelines)**: Defined in `entrix/lib/pipeline-stack.ts` using the modern `@aws-cdk/pipelines` module. This pipeline is self-mutating and deploys the CDK app to AWS automatically on merges to `main`. It updates itself if you change the pipeline definition.
+
+**Summary:**
+- GitHub Actions = Build & Test (CI)
+- CodePipeline (CDK Pipelines) = Deploy (CD)
+
+*Note:* You will have to create codestar/codebuild connection manually for it to referenced in Codepipeline code.
+
 ---
 
-## API Usage
+## Post Lambda API Usage
 
 - **Endpoint:** `POST /orders`
-- **Authorization:** Requires a valid JWT in the `Authorization` header.
+- **Authorization:** Requires a valid JWT Request Token in the `Authorization` header.
 - **Request Body Example:**
   ```json
   [
@@ -57,28 +80,34 @@ This project defines the infrastructure for the Entrix energy market auction ser
   ```
 - **Effect:** Records are stored in DynamoDB and will expire after 24 hours.
 
----
 
-## Authentication & Testing
+## API Authentication & Testing
 
-### Generating a JWT Token
+### Generating a JWT Token for API Authentication
 
-Use this Python script to generate a valid JWT token:
-```python
-import jwt
-import datetime
+You can use the provided utility in `src/create_auth_lambda_token` to generate a valid JWT token for testing the API Gateway Lambda authorizer.
 
-secret = "ExtrixApiLambdaSecret#1230001"
-payload = {
-    "sub": "test-user",
-    "iat": int(datetime.datetime.utcnow().timestamp()),
-    "exp": int((datetime.datetime.utcnow() + datetime.timedelta(hours=1)).timestamp())
-}
-token = jwt.encode(payload, secret, algorithm="HS256")
-print(token if isinstance(token, str) else token.decode())
-```
-- Save as `generate_jwt.py` and run with `python3 generate_jwt.py`.
-- Use the output as your JWT token.
+#### Steps:
+
+1. **Install dependencies:**
+   ```sh
+   cd src/create_auth_lambda_token
+   pip install -r requirements.txt
+   ```
+2. **Generate a JWT token:**
+   ```sh
+   python3 token.py
+   ```
+   The script will print a valid JWT token to the console.
+
+3. **Use the token in your API requests:**
+   - Add the following header to your requests:
+     ```
+     Authorization: Bearer <your-jwt-token>
+     ```
+
+Return to the project root to continue with deployment or other tasks.
+
 
 ### Testing with curl
 
@@ -99,6 +128,8 @@ curl -X POST \
 3. In the "Body" tab, select "raw" and "JSON", and enter your order array.
 4. Send the request.
 
+For troubleshooting, check CloudWatch logs for the authorizer Lambda for error details.
+
 ---
 
 ## Data Pipeline (Step Function)
@@ -112,7 +143,7 @@ curl -X POST \
 
 ---
 
-## Resources Created
+## List of services used
 
 - API Gateway REST API (with JWT authorizer)
 - Lambda Functions (API, A, B, authorizer)
@@ -125,7 +156,7 @@ curl -X POST \
 
 ---
 
-## Useful Commands
+## NPM/CDK commands to run project locally
 
 * `npm run build`   compile typescript to js
 * `npm run watch`   watch for changes and compile
@@ -133,34 +164,6 @@ curl -X POST \
 * `npx cdk deploy`  deploy this stack to your default AWS account/region
 * `npx cdk diff`    compare deployed stack with current state
 * `npx cdk synth`   emits the synthesized CloudFormation template
-
 ---
 
-For troubleshooting, check CloudWatch logs for the authorizer Lambda for error details.
 
----
-
-## Generating a JWT Token for API Authentication
-
-You can use the provided utility in `src/create_auth_lambda_token` to generate a valid JWT token for testing the API Gateway Lambda authorizer.
-
-### Steps:
-
-1. **Install dependencies:**
-   ```sh
-   cd src/create_auth_lambda_token
-   pip install -r requirements.txt
-   ```
-2. **Generate a JWT token:**
-   ```sh
-   python3 token.py
-   ```
-   The script will print a valid JWT token to the console.
-
-3. **Use the token in your API requests:**
-   - Add the following header to your requests:
-     ```
-     Authorization: Bearer <your-jwt-token>
-     ```
-
-Return to the project root to continue with deployment or other tasks.

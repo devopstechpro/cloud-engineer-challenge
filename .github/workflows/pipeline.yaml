@@ -1,12 +1,10 @@
-name: CDK Build, Validate, and Deploy
+name: CDK Build and Test
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+      - master
 
 jobs:
   cdk:
