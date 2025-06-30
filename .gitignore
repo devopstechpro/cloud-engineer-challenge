@@ -1,4 +1,4 @@
-# Node.js
+# Node.js/CDK
 node_modules/
 cdk.out/
 package-lock.json
@@ -13,14 +13,13 @@ __pycache__/
 .eggs/
 
 # Lambda build artifacts
-src/*/dist/
-src/*/build/
-src/*/venv/
-src/*/.env
-src/*/.pytest_cache/
-src/*/.mypy_cache/
-src/*/.coverage
-src/*/python/
+*/dist/
+*/build/
+*/venv/
+*/.env
+*/.pytest_cache/
+*/.mypy_cache/
+*/.coverage
 
 # VSCode and IDEs
 .vscode/
@@ -40,3 +39,14 @@ coverage/
 .env
 .env.*
 *.log
+
+# ---
+# Explicitly allow these files and directories (negate ignore)
+!auth_lambda/app.py
+!auth_lambda/requirements.txt
+!create_auth_lambda_token/
+!src/auth_lambda_layer/
+!entrix/
+!lambda_a/
+!lambda_b/
+!post_lambda/
