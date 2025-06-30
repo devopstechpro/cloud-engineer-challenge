@@ -31,6 +31,8 @@ export class PipelineStack extends cdk.Stack {
           },
           build: {
             commands: [
+              'pwd',
+              'ls -al',
               'cd entrix && npm run build',
               'cd entrix && npx cdk synth',
             ],
