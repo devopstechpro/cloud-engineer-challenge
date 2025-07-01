@@ -1,6 +1,36 @@
 import json
 import os
 import jwt  # PyJWT
+import boto3
+from botocore.exceptions import ClientError
+
+def get_secret():
+    """Retrieve JWT secret from AWS Secrets Manager"""
+    secret_name = os.environ.get('JWT_SECRET_ARN')
+    
+    if not secret_name:
+        raise ValueError("JWT_SECRET_ARN environment variable is not set")
+    
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=os.environ.get('AWS_REGION', 'eu-west-1')
+    )
+    
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+    else:
+        if 'SecretString' in get_secret_value_response:
+            secret_data = json.loads(get_secret_value_response['SecretString'])
+            return secret_data.get('secret', secret_data.get('JWT_SECRET'))
+        else:
+            raise ValueError("Secret value is not a string")
 
 def lambda_handler(event, context):
     """
@@ -10,7 +40,7 @@ def lambda_handler(event, context):
     headers = event.get('headers', {})
     auth_header = headers.get('Authorization') or headers.get('authorization', '')
     method_arn = event.get('methodArn', '*')
-    secret = os.environ.get('JWT_SECRET', 'ExtrixApiLambdaSecret#1230001')
+    secret = get_secret()
 
     if not auth_header:
         return generate_policy('anonymous', 'Deny', method_arn, {'error': 'Missing Authorization header'})

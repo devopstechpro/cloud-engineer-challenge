@@ -7,10 +7,14 @@ import * as sns from 'aws-cdk-lib/aws-sns';
 import * as stepfunctions from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 export class EntrixStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // Reference existing JWT Secret in Secrets Manager
+    const jwtSecret = secretsmanager.Secret.fromSecretNameV2(this, 'JwtSecret', 'entrix-jwt-secret');
 
     // DynamoDB Table with TTL for 24h expiry
     const table = new dynamodb.Table(this, 'OrdersTable', {
@@ -119,10 +123,13 @@ export class EntrixStack extends cdk.Stack {
       handler: 'app.lambda_handler',
       code: lambda.Code.fromAsset('../src/auth_lambda'),
       environment: {
-        JWT_SECRET: 'ExtrixApiLambdaSecret#1230001',
+        JWT_SECRET_ARN: jwtSecret.secretArn,
       },
       layers: [jwtLayer],
     });
+
+    // Grant the Lambda function permission to read the secret
+    jwtSecret.grantRead(authorizerLambda);
 
     // API Gateway to expose the API Lambda as a POST endpoint
     const api = new apigateway.LambdaRestApi(this, 'EntrixApi', {
