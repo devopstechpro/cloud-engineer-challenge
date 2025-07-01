@@ -51,6 +51,12 @@ This project defines the infrastructure for the Entrix energy market auction ser
 
 **Steps to deploy app using default AWS credentials.**
 
+**Pre-requiste:**
+- AWS account
+- AWS CLI configured (as default profile)
+- NPM
+- AWS CDK installed
+
 **Automated deployment steps:**
 
 1. **Set your JWT secret token:**
@@ -116,7 +122,13 @@ This project uses two separate pipelines to automatically build, test and deploy
 **Usage Summary:**
 - GitHub Actions = Build & Test (CI)
 - CodePipeline (CDK Pipelines) = Deploy (CD)
-- 
+
+**Links to pipeline:**
+- [Codepipeline](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/PipelineStack-Pipeline9850B417-bEWfrgXI4je7/view?region=eu-west-1)
+
+- [Github Actions](https://github.com/devopstechpro/cloud-engineer-challenge/actions)
+
+
 **Note:** You will have to create **codestar/codebuild** connection manually for it to referenced in Codepipeline code.
 
 ---
