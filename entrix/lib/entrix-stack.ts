@@ -70,7 +70,6 @@ export class EntrixStack extends cdk.Stack {
     // 2. Choice: Check if results:true
     const checkResults = new stepfunctions.Choice(this, 'Results Ready?');
     const isResultsTrue = stepfunctions.Condition.booleanEquals('$.results', true);
-    const isResultsFalse = stepfunctions.Condition.booleanEquals('$.results', false);
 
     // 3. Map: For each order, invoke LambdaB
     const lambdaBTask = new tasks.LambdaInvoke(this, 'Invoke LambdaB', {
@@ -136,6 +135,13 @@ export class EntrixStack extends cdk.Stack {
       handler: apiLambda,
       proxy: false,
       restApiName: 'Entrix Orders API',
+      deploy: true,
+      deployOptions: {
+        stageName: 'prod',
+        description: 'Production stage for Entrix Orders API',
+        loggingLevel: apigateway.MethodLoggingLevel.INFO,
+        dataTraceEnabled: true,
+      },
     });
 
     const orders = api.root.addResource('orders');
